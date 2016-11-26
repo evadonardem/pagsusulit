@@ -1,54 +1,64 @@
 @extends('layout.main')
 
-@section('title', 'Question')
+@section('title', 'Question > Create')
 
 @section('content')
-<div id="view">
-	<h1>Question</h1>
-	<div class="row">
-		<div class="col-md-12 col-sm-12">
-			<a href="{{ action('QuestionController@create') }}" class="k-button k-primary pull-right">Add New Question</a>
-		</div>
-	</div>
-	
-	<div data-template="questions-template" data-bind="source: questions"></div>
-	<input type="hidden" name="_token" value="{{ csrf_token() }}">
-	<div id="pager" data-bind="source: questions"></div>
-</div>
+<div class="row">
+	<div class="col-md-6 col-sm-12">
+		<form method="post" action="{{ action('QuestionController@store') }}">
+			<h1><i class="fa fa-lg fa-file"></i> Create Questionnaire</h1>
+			<label>Description</label>
+			<textarea></textarea>
 
+			<input type="hidden" name="_token" value="{{ csrf_token() }}">
+		</form>
+	</div>
+</div>
+<div data-template="questions-template" data-bind="source: questions"></div>
 @endsection
 
 @section('scripts')
 <script type="text/javascript">
-$(function() {	
-	var viewModel = kendo.observable({
+var Questionnaire = {};
+Questionnaire.viewModel = null;
+Questionnaire.init = function() {
+	var ref = this;
+	Questionnaire.viewModel = ref.initViewModel();
+}
+
+Questionnaire.initViewModel = function() {
+	var ref = this;
+	var viewModel = new kendo.observable({
 		questions: new kendo.data.DataSource({
 			transport: {
 				read: {
-					url: "{{ action('QuestionController@index') }}",
-					dataType: 'json'
+					url: "{{ url('api/get_available_questions') }}",
+					dataType: 'json',
+					data: {
+						questions: [3],
+						_token: $('input[name=_token]').val()
+					},
+					type: 'post'
 				}
-			},
-			pageSize: 10
+			}
 		}),
-		deleteQuestion: function(e) {
-			var ref = this;
-			var deleteURL = $(e.target).closest('a').prop('href');			
-			$.post(deleteURL, { _method: 'delete', _token: $('input[name=_token]').val() }, function(r) {
-				ref.questions.read();
-			});
-			e.preventDefault();
-			return false;
-		},
+
 		correctAnswer: function(e) {			
 			return (e.is_correct>0) ? '<i class="fa fa-lg fa-check"></i>' : '<i class="fa fa-lg fa-close"></i>';
 		}
 	});
-	kendo.bind($('#view'), viewModel);
 
-	$('#pager').kendoPager();
+	kendo.bind($('body'), viewModel);
+	return viewModel;
+}
+
+
+$(function() {
+	Questionnaire.init();
+	$('textarea').kendoEditor().data('kendoEditor');
 });
 </script>
+
 
 <script id="questions-template" type="text/x-kendo-template">
 	<div class="row">

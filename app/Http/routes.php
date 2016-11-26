@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 
 Route::resource('question', 'QuestionController');
-
+Route::resource('questionnaire', 'QuestionnaireController');
 
 Route::get('/testing', function() {
 	$question = App\Question::find(1);
@@ -26,4 +26,8 @@ Route::get('/testing', function() {
 	$question->options()->save(App\Option::create(
 		[ 'description' => 'A' ]
 	));
+});
+
+Route::group(['prefix' => 'api'], function() {
+	Route::post('get_available_questions', 'QuestionnaireController@get_available_questions');
 });

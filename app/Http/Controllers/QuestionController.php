@@ -27,6 +27,7 @@ class QuestionController extends Controller
                     $option->description = html_entity_decode($option->description);
                 }
                 $question->deleteURL = action('QuestionController@destroy', $question->id);
+                $question->editURL = '';
             }
             return $questions;
         }
@@ -52,15 +53,32 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
+        $settings = $request->input('settings');
+        $settings = !is_array($settings) ? [] : $settings;
+
+        $correct_answer = $request->input('correct_answer');
+        $correct_answer = !is_array($correct_answer) ? [] : $correct_answer;
+
         $question = Question::create([
-            'description' => $request->input('description')
+            'description' => $request->input('description'),
+            'is_random_options' => (array_key_exists('randomOptions', $settings)) ? true : false,
+            'is_finalized' => $request->input('saveType') == 'finalized' ? true : false
         ]);
 
         $options = $request->input('options');
         foreach ($options as $key => $value) {
+            
+            $is_correct = false;
+            foreach($correct_answer as $x) {
+                if($x == $key) {
+                    $is_correct = true;
+                    break;
+                }
+            }
+
             $question->options()->save(Option::create([
                 'description' => $value,
-                'is_correct' => ($request->input('correct_answer')==$key) ? true : false
+                'is_correct' => $is_correct
             ]));
         }
 
