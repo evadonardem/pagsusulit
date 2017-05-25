@@ -10,7 +10,7 @@
 			<a href="{{ action('QuestionController@create') }}" class="k-button k-primary pull-right">Add New Question</a>
 		</div>
 	</div>
-	
+
 	<div data-template="questions-template" data-bind="source: questions"></div>
 	<input type="hidden" name="_token" value="{{ csrf_token() }}">
 	<div id="pager" data-bind="source: questions"></div>
@@ -20,7 +20,7 @@
 
 @section('scripts')
 <script type="text/javascript">
-$(function() {	
+$(function() {
 	var viewModel = kendo.observable({
 		questions: new kendo.data.DataSource({
 			transport: {
@@ -33,14 +33,14 @@ $(function() {
 		}),
 		deleteQuestion: function(e) {
 			var ref = this;
-			var deleteURL = $(e.target).closest('a').prop('href');			
+			var deleteURL = $(e.target).closest('a').prop('href');
 			$.post(deleteURL, { _method: 'delete', _token: $('input[name=_token]').val() }, function(r) {
 				ref.questions.read();
 			});
 			e.preventDefault();
 			return false;
 		},
-		correctAnswer: function(e) {			
+		correctAnswer: function(e) {
 			return (e.is_correct>0) ? '<i class="fa fa-lg fa-check"></i>' : '<i class="fa fa-lg fa-close"></i>';
 		}
 	});
@@ -60,13 +60,13 @@ $(function() {
 			<span>Saved as Draft</span><br>
 			<a data-bind="attr: { href: editURL }"><i class="fa fa-lg fa-edit"></i></a>
 			#}#
-			<a data-bind="attr: { href: deleteURL }, events: { click: deleteQuestion }"><i class="fa fa-lg fa-trash"></i></a>						
+			<a data-bind="attr: { href: deleteURL }, events: { click: deleteQuestion }"><i class="fa fa-lg fa-trash"></i></a>
 		</div>
 		<div class="col-md-9 col-sm-9">
 			<div data-bind="html: description"></div>
 			<div data-template="options-template" data-bind="source: options"></div>
-		</div>				
-	</div>	
+		</div>
+	</div>
 </script>
 
 <script id="options-template" type="text/x-kendo-template">
@@ -74,8 +74,8 @@ $(function() {
 		<div class="col-md-1 col-sm-1">
 			<span data-bind="html: correctAnswer"></span>
 		</div>
-		<div class="col-md-1 col-sm-1">						
-			<span data-bind="text: id"></span>			
+		<div class="col-md-1 col-sm-1">
+			<span data-bind="text: id"></span>
 		</div>
 		<div class="col-md-10 col-sm-10">
 			<div data-bind="html: description"></div>

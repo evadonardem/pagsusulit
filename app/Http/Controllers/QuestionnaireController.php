@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
+use App\Questionnaire;
+
 use App\Question;
 
 use App\Option;
@@ -17,8 +19,16 @@ class QuestionnaireController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->ajax()) {
+            $questionnaires = Questionnaire::all();
+            foreach ($questionnaires as &$questionnaire) {
+                $questionnaire->description = html_entity_decode($questionnaire->description);
+                $questionnaire->deleteURL = action('QuestionnaireController@destroy', $questionnaire->id);
+            }
+            return $questionnaires;
+        }
         return view('questionnaire.index');
     }
 
@@ -40,7 +50,8 @@ class QuestionnaireController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Questionnaire::create($request->all());
+        return redirect(action('QuestionnaireController@index'));
     }
 
     /**
@@ -85,7 +96,10 @@ class QuestionnaireController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $questionnaire = Questionnaire::find($id);
+        if(!is_object($questionnaire)) return;
+        $questionnaire->delete();
+        return $questionnaire;
     }
 
 

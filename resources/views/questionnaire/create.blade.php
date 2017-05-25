@@ -5,12 +5,14 @@
 @section('content')
 <div class="row">
 	<div class="col-md-6 col-sm-12">
-		<form method="post" action="{{ action('QuestionController@store') }}">
+		<form method="post" action="{{ action('QuestionnaireController@store') }}">
 			<h1><i class="fa fa-lg fa-file"></i> Create Questionnaire</h1>
+
 			<label>Description</label>
-			<textarea></textarea>
+			<input type="text" name="description" class="k-input k-textbox" >
 
 			<input type="hidden" name="_token" value="{{ csrf_token() }}">
+			<button type="submit" name="button">Create</button>
 		</form>
 	</div>
 </div>
@@ -43,7 +45,7 @@ Questionnaire.initViewModel = function() {
 			}
 		}),
 
-		correctAnswer: function(e) {			
+		correctAnswer: function(e) {
 			return (e.is_correct>0) ? '<i class="fa fa-lg fa-check"></i>' : '<i class="fa fa-lg fa-close"></i>';
 		}
 	});
@@ -70,13 +72,13 @@ $(function() {
 			<span>Saved as Draft</span><br>
 			<a data-bind="attr: { href: editURL }"><i class="fa fa-lg fa-edit"></i></a>
 			#}#
-			<a data-bind="attr: { href: deleteURL }, events: { click: deleteQuestion }"><i class="fa fa-lg fa-trash"></i></a>						
+			<a data-bind="attr: { href: deleteURL }, events: { click: deleteQuestion }"><i class="fa fa-lg fa-trash"></i></a>
 		</div>
 		<div class="col-md-9 col-sm-9">
 			<div data-bind="html: description"></div>
 			<div data-template="options-template" data-bind="source: options"></div>
-		</div>				
-	</div>	
+		</div>
+	</div>
 </script>
 
 <script id="options-template" type="text/x-kendo-template">
@@ -84,8 +86,8 @@ $(function() {
 		<div class="col-md-1 col-sm-1">
 			<span data-bind="html: correctAnswer"></span>
 		</div>
-		<div class="col-md-1 col-sm-1">						
-			<span data-bind="text: id"></span>			
+		<div class="col-md-1 col-sm-1">
+			<span data-bind="text: id"></span>
 		</div>
 		<div class="col-md-10 col-sm-10">
 			<div data-bind="html: description"></div>
